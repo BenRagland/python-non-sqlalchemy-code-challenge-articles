@@ -1,24 +1,30 @@
-# import ipdb
+
 class Article:
     def __init__(self, author, magazine, title):
-        self.author = author
-        self.magazine = magazine
-        self._title = title
+        self.author = Author(author)
+        self.magazine = Magazine(magazine,"default")
+        self.title = title
         self.authors = [author]
         self.magazines = [magazine]
 
-        if ( 4< len(self._title) < 51 ):
-             raise ValueError("Article not correct length")
-        if not isinstance(title, str):
-            raise ValueError("article must be a string")
-       
+        
     @property
     def title(self):
         return self._title
     
+    @title.setter
+    def title(self,title):
+        if ( 4< len(title) < 51 ):
+             raise ValueError("Article not correct length")
+        if not isinstance(title, str):
+            raise TypeError("article must be a string")
+        if hasattr(self,"title"):
+            raise AttributeError("title attr already set")
+        self._title = title
+    
     @property
     def author(self):
-        [ author for author in self.authors if isinstance(author,Author)]
+        return [ author for author in self.authors if isinstance(author,Author)]
         
     @author.setter
     def author(self,article):
@@ -27,49 +33,40 @@ class Article:
         else:
             self.authors.append(article)
 
-    @property
-    def magazine(self):
-        { magazine for magazine in self.magazines if isinstance(magazine,Magazine)}
+    # @property
+    # def magazine(self):
+    #    return { magazine for magazine in self.magazines if isinstance(magazine,Magazine)}
         
+    # @magazine.setter
+    # def magazine(self,magazine):
+    #     if not isinstance(magazine,Magazine):
+    #         raise TypeError("not of type Author")
+    #     else:
+    #         self.magazine.append(magazine)
     
-    @magazine.setter
-    def magazine(self,magazine):
-        if not isinstance(magazine,Magazine):
-            raise TypeError("not of type Author")
-        else:
-            self.magazine.append(magazine)
-            
-    @author.setter
-    def author(self,author):
-        if not isinstance(Article,Author):
-            raise TypeError("not of type Author")
-        else:
-            self.authors.append(author)
-        
-    @property
-    def magazine(self):
-        return self._magazine
-
-
-        
 class Author:
 
     def __init__(self,name):
-        self._name = name
-        if len(name) == 0:
-            raise Exception("must be longer than 0")
-        if not isinstance(name, str):
-            raise Exception("name must be string")
+        self.name = name
         self._articles = []
-
-
+        
     @property
     def name(self):
-        return self.name
+        return self._name
+    
+    @name.setter
+    def name(self,name):
+        if hasattr(self,"name"):
+            raise AttributeError("Attribute can't be modified after creation")
+        if len(name) == 0:
+                raise Exception("must be longer than 0")
+        if not isinstance(name, str):
+            raise TypeError("name must be string")
+        self._name = name
 
     @property
     def articles(self):
-        [ article for article in self.articles if isinstance(article,Article)]
+        return [ article for article in self.articles if isinstance(article,Article)]
 
 
     def magazines(self):
@@ -85,18 +82,14 @@ class Author:
             return None
         return list({article.magazine.category for article in self._articles})
 
+    
 
 class Magazine:
     def __init__(self, name, category):
-        self._name = name
-        self._category = category
-        self._articles=[]
-        self._contributors=[]
-
-        if not ( 1< len(name) < 17 ) :
-            raise Exception("not correct name length") 
-        if not isinstance(name, str):
-            raise Exception("Magazine name must be string")
+        self.name = name
+        self.category = category
+        self.articles=[]
+        self.contributors=[]
     
     @property
     def name(self):
@@ -104,17 +97,24 @@ class Magazine:
 
     @name.setter
     def name(self,name):
-        if ((len(name) > 1 and len(name)> 16 ) and type(name)==str):
-            self.name = name
-        else:
-            print("incorrect name format")
-    
+        if not ( 1< len(name) < 17 ) :
+            raise ValueError("not correct name length") 
+        if not isinstance(name, str):
+            raise TypeError("Magazine name must be string")
+       
     @property
     def category(self):
        return self._category
+    
+    @category.setter
+    def category(self,category):
+       if not (isinstance(category,str)):
+           raise TypeError("Must be a string")
+       
+       self._category = category
 
     def articles(self):
-        [ article for article in self._articles if isinstance(article,Article)]
+        return [ article for article in self._articles if isinstance(article,Article)]
         
 
     def contributors(self):
@@ -135,4 +135,4 @@ class Magazine:
 
         return [author for author, count in author_num.items() if count > 2] if author_num else None
 
-# ipdb.set_trace()
+import ipdb; ipdb.set_trace()
